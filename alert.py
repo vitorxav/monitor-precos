@@ -5,11 +5,8 @@ from email.mime.multipart import MIMEMultipart
 # CONFIGURAÇÕES
 EMAIL_REMETENTE = "vitordias.xavier1@gmail.com"
 SENHA_APP = "xqyf qikz hhpw plcg"
-EMAIL_DESTINATARIO = "vitoremanuezinho@gmail.com"
 
-
-def enviar_alerta(preco, url):
-
+def enviar_alerta(email_destinatario, preco, url):
     assunto = "📢 Alerta de Preço: Produto abaixo do valor desejado!"
     corpo = f"""
     O produto que você está monitorando está com preço baixo!
@@ -20,10 +17,9 @@ def enviar_alerta(preco, url):
     Verifique agora!
     """
 
-    # Montar e-mail
     mensagem = MIMEMultipart()
     mensagem["From"] = EMAIL_REMETENTE
-    mensagem["To"] = EMAIL_DESTINATARIO
+    mensagem["To"] = email_destinatario
     mensagem["Subject"] = assunto
     mensagem.attach(MIMEText(corpo, "plain"))
 
@@ -35,7 +31,3 @@ def enviar_alerta(preco, url):
             print("[EMAIL] Alerta enviado com sucesso!")
     except Exception as e:
         print(f"[ERRO] Falha ao enviar o alerta por e-mail: {e}")
-
-
-#if __name__ == "__main__":
-#    enviar_alerta(2599.90, "https://www.kabum.com.br/produto/123456")
