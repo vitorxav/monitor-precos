@@ -1,6 +1,6 @@
 import time
 from scraper.selenium_scraper import get_price_with_selenium
-# from alert import enviar_alerta
+from alert import enviar_alerta
 
 def monitorar_produto(url, css_selector, preco_alvo, intervalo=60):
     """
@@ -23,7 +23,7 @@ def monitorar_produto(url, css_selector, preco_alvo, intervalo=60):
 
             if preco_atual <= preco_alvo:
                 print("[ALERTA] O preço está ABAIXO do alvo!")
-            #    enviar_alerta(preco_atual, url)
+                enviar_alerta(preco_atual, url)
             else:
                 print("O preço está ACIMA do alvo!")
 
