@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 
 # CONFIGURAÇÕES
 EMAIL_REMETENTE = "vitordias.xavier1@gmail.com"
-SENHA_APP = "xqyf qikz hhpw plcg"
+SENHA_APP = ""
 
 def enviar_alerta(email_destinatario, preco, url):
     assunto = "📢 Alerta de Preço: Produto abaixo do valor desejado!"
