@@ -6,8 +6,13 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
+            margin: 0;
+            padding: 0;
             background-color: #f2f2f2;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         h1 {
             color: #333;
@@ -17,9 +22,11 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px #ccc;
+            width: 100%;
             max-width: 600px;
+            box-sizing: border-box;
         }
-        input[type="text"], input[type="number"], input[type="email"] {
+        input[type="text"], input[type="number"] {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -27,13 +34,14 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-        input[type="submit"] {
+        input[type="submit"], button {
             background-color: #007bff;
             color: white;
             padding: 10px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-right: 10px;
         }
         .mensagem {
             margin-top: 20px;
@@ -42,32 +50,89 @@
             background-color: #e0e0e0;
             padding: 15px;
             border-radius: 6px;
+            max-width: 600px;
         }
     </style>
 </head>
 <body>
-    <h1>Monitorador de Preço</h1>
-    <form method="POST">
-        <label>URL do produto:</label>
-        <input type="text" name="url" placeholder="https://www.exemplo.com/produto" required>
+    <div>
+        <h1>Monitorador de Preço</h1>
+        <form id="formulario">
+            <label>URL do produto:</label>
+            <input type="text" name="url" required>
 
-        <label>Seletor CSS do preço:</label>
-        <input type="text" name="selector" placeholder="#preco > span.valor" required>
+            <label>Seletor CSS do preço:</label>
+            <input type="text" name="selector" required>
 
-        <label>Preço desejado (R$):</label>
-        <input type="number" step="0.01" name="preco_desejado" placeholder="99.90" required>
+            <label>Preço desejado (R$):</label>
+            <input type="number" step="0.01" name="preco_desejado" required>
 
-        <label>Seu e-mail:</label>
-        <input type="email" name="email" placeholder="voce@email.com" required>
+            <label>Seu e-mail:</label>
+            <input type="text" name="email" required>
 
-        <input type="submit" value="Verificar Preço">
-    </form>
+            <input type="submit" value="Verificar Preço">
+        </form>
+
+        <br>
+        <button id="btnAtualizar" style="display:none;">🔄 Atualizar a cada 60s</button>
+        <button id="btnParar" style="display:none;">🛑 Parar Atualização</button>
+
+        <div id="resultado" class="mensagem" style="display: none;"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('formulario');
+        const resultado = document.getElementById('resultado');
+        const btnAtualizar = document.getElementById('btnAtualizar');
+        const btnParar = document.getElementById('btnParar');
+
+        let dadosMonitorados = null;
+        let intervalo = null;
+
+        function verificarPreco() {
+            if (!dadosMonitorados) return;
+
+            resultado.innerText = "⏳ Verificando...";
+            resultado.style.display = "block";
+
+            fetch('/verificar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dadosMonitorados)
+            })
+            .then(res => res.json())
+            .then(data => {
+                resultado.innerText = data.mensagem;
+            })
+            .catch(() => {
+                resultado.innerText = "❌ Erro ao verificar o preço.";
+            });
+        }
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            dadosMonitorados = Object.fromEntries(formData.entries());
+
+            verificarPreco();
 
 
-    {% if mensagem %}
-        <div class="mensagem">
-            {{ mensagem }}
-        </div>
-    {% endif %}
+            btnAtualizar.style.display = "inline-block";
+            btnParar.style.display = "inline-block";
+
+            // iniciar atualização automática
+            if (intervalo) clearInterval(intervalo);
+            intervalo = setInterval(verificarPreco, 60000);
+        });
+
+        btnParar.addEventListener('click', function () {
+            clearInterval(intervalo);
+            intervalo = null;
+            resultado.innerText += "\n🛑 Atualização automática pausada.";
+        });
+    </script>
 </body>
 </html>
