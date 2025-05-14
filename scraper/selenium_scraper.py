@@ -35,7 +35,7 @@ def get_price_with_selenium(url, css_selector):
         driver.quit()  # Fecha o navegador (mesmo em segundo plano)
 
 
-# if __name__ == "__main__":
+#if __name__ == "__main__":
     # Link de exemplo (Notebook Dell na Kabum)
 #    url = "https://www.kabum.com.br/produto/205760/gravador-dvd-rw-sata-asus-24x-drw-24f1mt-blk-b-as"
 
